@@ -4,3 +4,11 @@
 
 [build.environment]
   NODE_VERSION = "20"
+
+# SPA fallback: any unknown /dashboard/* path serves the dashboard SPA's index.html
+# so client-side routes (/dashboard/sign-in, /dashboard/me, etc.) survive refreshes
+# and the OAuth callback lands correctly.
+[[redirects]]
+  from = "/dashboard/*"
+  to = "/dashboard/index.html"
+  status = 200
