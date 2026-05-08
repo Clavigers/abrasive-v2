@@ -1,0 +1,503 @@
+---
+import Base from '../layouts/Base.astro';
+import { Image } from 'astro:assets';
+import abrasiveBlock from '../abrasive_block.png';
+import abrasiveLetters from '../AbrasiveLetters.png';
+import trifoil from '../Trifoil.png';
+import likeADog from '../LikeADog.png';
+import Button from '../components/Button.astro';
+import InstallCommand from '../components/InstallCommand.astro';
+import PaperNote from '../components/PaperNote.astro';
+---
+<Base title="abrasive">
+  <div class="brand-banner" slot="top-banner" aria-hidden="true">
+    <div class="brand-tagline">
+      <span>FAST</span>
+      <span>RUST</span>
+      <span>BUILDS</span>
+    </div>
+    <div class="brand-banner-inner">
+      <Image src={abrasiveLetters} alt="ABRASIVE" class="brand-letters" widths={[380, 760]} sizes="380px" />
+      <Image src={trifoil} alt="Claviger" class="brand-trifoil" width={160} />
+    </div>
+  </div>
+  <main>
+    <div class="hero">
+      <div class="hero-image">
+        <div class="logo-wrap">
+          <Image src={abrasiveBlock} alt="ABRASIVE" class="logo" widths={[480, 960]} sizes="480px" loading="eager" fetchpriority="high" />
+          <div class="logo-tooltip" role="tooltip">
+            <span class="chip">Please excuse my slop</span>
+            If you or someone you know is proficient in 3D software and wants to make an actual 3D model I could use for this, please let me know. I'd be happy to pay a real human artist for a better image!
+          </div>
+        </div>
+        <a href="https://www.redbubble.com/" class="sticker-link" aria-label="Stickers" target="_blank" rel="noopener noreferrer">
+          <Image src={likeADog} alt="" class="sticker" widths={[340, 680]} sizes="340px" />
+        </a>
+      </div>
+      <div class="cta">
+        <InstallCommand large />
+        <div class="buttons">
+          <Button href="/demo">Demo &#9655;</Button>
+          <Button href="/getting-started" primary>Get Started</Button>
+        </div>
+      </div>
+      <PaperNote>
+        <p><mark>WARNING!</mark> This is Pre-Alpha software. There are sure to be issues. Feel free to reach out to me directly at <a href="mailto:sadosystemz@gmail.com">sadosystemz@gmail.com</a> with any problems.</p>
+      </PaperNote>
+    </div>
+
+    <section class="founder-letter">
+      <header>
+        <h2>I have given up on trying to make Bazel and Rust get along</h2>
+      </header>
+      <article>
+        <p>I have lost literally hundreds of hours to debugging the most insane shit trying to get bazel and rust to work well together. If you know you know.</p>
+        <p>and what is my reward for all my work... SO MANY THINGS THAT JUST WORK tm WITH CARGO ARE BORDERLINE IMPOSSIBLE. todo add a link to the list of things that dont work</p>
+        <p>WORST OF ALL, for my own personal projects although bazel has given me a tiny correctness improvement over cargo it has actually made my builds slower on average. slower. slower. fast correct choose neither.</p>
+        <p>I don't mean to pick on the bazel people ... those googlers I'm actually sure they are much smarter than me. I have accepted the truth, its me ... I am the problem. I am simply not smart enough to make this shit work reliably</p>
+        <p>So any way recently I started a new project and I asked myself this question: is there something else I can use other than bazel and get the same benefits. why? maybe just for a change of scenery, a new year new tormentor chamber.</p>
+        <p>I google'd and I claude'd and I asked around and the more I looked the more obsessed I became. This shit was like an infohazard for me.</p>
+        <p>I found reddit posts that claimed to sorta do what I want, I dig a little deeper... dead project. I dig a little deeper its just fucking sccache. The entire internet all at once is gaslighting me into thinking that sccache is the solution to my problem</p>
+        <p>Ok let me try it. SCCACHE IS NOT THE SOLUTION TO MY PROBLEM. it is not suited to the normal development loop at all. The only place where sccache consistently amortizes the cost of extra work it does for cache bookkeeping is in CI. </p>
+        <p>bazel is good for CI, but what I love about bazel is having a single system for both normal dev and CI. I love sharing a cache with my CI. and more than that I LOVE being able to trust my cache, sccache does not help with correctness.</p>
+        <p>in any way there is no hermetic story here at all, the story is run it in a container. For CI that's ok but I want it all I want low latency not just high throughput.</p> 
+        <p>Ok what about nix? nix nix nix where have you been all my life. I thank the lord for bazel because it lead me to nix. so anyway, to make a long story short I ended up making a semi-over engineered thing which uses nix but which does not</p>
+        <p>require you to understand nix and which endows cargo with bazel-like super powers, without requiring you to understand bazel</p>
+        <p>for the person who read all that and basically doesn't know what I mean at all: this is an easy way to make your rust builds faster, via distributed compilation and remote shared caching.</p>
+        <p>its different from the existing solution sccache in these key ways,</p> 
+        <p>1. It is hermetic ("works on my machine" issues are mitigated)</p>
+        <p>2. It is not designed for CI first its designed for normal development first (we aim to keep latency as low as possible)</p>
+        <p>3. it caches lots of stuff. instead of just rlibs abrasive also caches binaries, test results, stdin and stdout, even benchmarks.</p>
+
+        <p>Abrasive started with a simple question: <strong>"what if we took the best parts of Bazel and the best parts of Cargo, and mashed them together?"</strong></p>
+        <p>A few tools already do some of what Abrasive does, but none of them do all of it. <a href="https://github.com/mozilla/sccache">Sccache</a> shares a build cache between machines. <a href="https://nexte.st/">Nextest</a> (and <a href="https://maelstrom-software.com/">Maelstrom</a>) run only the tests you need, like Bazel does. There's also <a href="https://github.com/liamaharon/crunch">crunch</a>, which copies your code to a remote machine over SSH. Surprisingly, that one gives me a lot of what I want!</p>
+        <p>The tools I love (especially <a href="https://nexte.st/">nextest</a>) are wonderfully Rust-specific, but they don't do everything I want from Bazel. Bazel is great, but because it's designed to work across many languages, it's awkward to use with Rust. Migration is especially painful.</p>
+        <p>Personally, I use Abrasive alongside <a href="https://mise.jdx.dev/">mise</a>. That combo covers most of what I wanted from Bazel.</p>
+        <p>So here's a simple rule. If you want Bazel-like benefits and you're working in a big repo with many languages that depend on each other, use Bazel. If you want Bazel-like benefits and your project is mostly Rust, or your Rust code stays separate from other languages, Abrasive might work for you!</p>
+        <p>Using Abrasive is just like using Cargo. The only setup is a one-time login and running <code>abrasive setup</code> in your project's root. After that, everything is just Cargo.</p>
+        <p>Abrasive also comes with a little dashboard (similar to <a href="https://www.buildbuddy.io/">BuildBuddy</a> and <a href="https://www.engflow.com/">EngFlow</a> in the Bazel world).</p>
+        <p>Today (April 22, 2026) Abrasive is still a little half-baked, and not all of the code is public yet. If you want to contribute, the most helpful thing you can do is use it.</p>
+      </article>
+      <div class="signature">
+        <span class="sig-handwritten">Will Murray</span>
+        <dl>
+          <dt><a href="mailto:sadosystemz@gmail.com">sadosystemz@gmail.com</a></dt>
+          <dd>Founder of Claviger</dd>
+        </dl>
+      </div>
+    </section>
+
+    <section class="prealpha-gate">
+      <p class="prealpha-note">I can handle about 20 users right now. If we hit the cap, new signups will pause.</p>
+      <div class="prealpha-bar">
+        <div class="prealpha-fill" style="width: 15%"></div>
+      </div>
+      <p class="prealpha-caption"><span class="prealpha-current">3</span> of 20 signed up</p>
+      <a class="prealpha-cta" data-auth="signed-out" href="/dashboard/sign-up">Sign up free</a>
+    </section>
+
+  </main>
+</Base>
+
+<style>
+  .prealpha-gate {
+    width: min(100%, 1280px);
+    margin: 1rem auto;
+    padding: 0 2rem;
+    text-align: center;
+    font-family: "Figtree", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    letter-spacing: -0.025em;
+  }
+  .prealpha-note {
+    font-size: max(1.15rem, 1.55vw);
+    color: var(--fg);
+    line-height: 1.45;
+    font-weight: 400;
+    max-width: 900px;
+    margin: 0 auto 0.9rem;
+  }
+  .prealpha-bar {
+    width: 100%;
+    max-width: 360px;
+    height: 4px;
+    margin: 0 auto;
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .prealpha-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #e8b931, #d4872e);
+    border-radius: 2px;
+    transition: width 0.4s ease;
+  }
+  .prealpha-caption {
+    font-size: max(1.15rem, 1.55vw);
+    color: var(--fg);
+    line-height: 1.45;
+    font-weight: 400;
+    margin-top: 0.6rem;
+  }
+  .prealpha-current {
+    font-weight: inherit;
+  }
+  .prealpha-cta {
+    display: inline-block;
+    margin-top: 1.5rem;
+    background: rgb(11, 138, 15);
+    color: #fff;
+    font-weight: 500;
+    font-size: 0.95rem;
+    letter-spacing: -0.0175em;
+    padding: 0.6rem 1.25rem;
+    border-radius: 0.25em;
+    text-decoration: none;
+    transition: background 0.15s ease;
+  }
+  .prealpha-cta:hover,
+  .prealpha-cta:focus {
+    background: rgb(60, 175, 55);
+    color: #fff;
+  }
+  .prealpha-cta[hidden] {
+    display: none;
+  }
+  .founder-letter {
+    --letter-base: max(1.15rem, 1.55vw);
+    width: min(100%, 1280px);
+    margin: 6rem auto 2rem;
+    padding: 0 2rem;
+    font-family: "Figtree", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: var(--letter-base);
+    color: var(--fg);
+    letter-spacing: -0.025em;
+    text-align: center;
+  }
+  .founder-letter header {
+    margin-bottom: 3rem;
+  }
+  .founder-letter header h2 {
+    font-family: "Figtree", -apple-system, sans-serif;
+    font-size: max(2rem, 4.5vw);
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.035em;
+    color: var(--fg);
+    margin: 0 auto;
+    max-width: min(900px, 100%);
+  }
+  .founder-letter article {
+    column-gap: 3rem;
+    text-align: left;
+    max-width: 100%;
+    margin: 0 auto;
+  }
+  @media (min-width: 900px) {
+    .founder-letter article {
+      column-count: 2;
+    }
+  }
+  .founder-letter article p {
+    font-size: inherit;
+    font-weight: 400;
+    line-height: 1.45;
+    margin: 0 0 1.05em;
+    break-inside: avoid-column;
+  }
+  .founder-letter article strong {
+    font-weight: 700;
+    color: var(--fg);
+  }
+  .founder-letter article a {
+    color: #58a6ff;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    font-weight: inherit;
+  }
+  .founder-letter article a:hover {
+    color: #80b9ff;
+  }
+  .founder-letter article code {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.88em;
+    background: var(--code-bg);
+    padding: 0.1em 0.35em;
+    border-radius: 4px;
+    color: var(--accent);
+  }
+  .signature {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.4rem;
+    margin: 3rem 0 0 auto;
+    width: fit-content;
+    text-align: right;
+  }
+  .sig-handwritten {
+    font-family: "Caveat", cursive;
+    font-size: 3rem;
+    font-weight: 500;
+    color: var(--fg);
+    line-height: 1;
+    transform: rotate(-3deg);
+    transform-origin: right center;
+    margin-bottom: 0.4rem;
+  }
+  .signature dl {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    margin: 0;
+    font-size: 0.95rem;
+    line-height: 1.4;
+  }
+  .signature dt {
+    color: var(--fg);
+    font-weight: 500;
+    margin: 0;
+  }
+  .signature dt a {
+    color: #58a6ff;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .signature dt a:hover {
+    color: #80b9ff;
+  }
+  .signature dd {
+    color: var(--muted);
+    font-style: italic;
+    font-size: 0.88rem;
+    margin: 0;
+  }
+  main {
+    padding-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+  }
+  .hero {
+    display: grid;
+    grid-template-columns: auto auto;
+    grid-template-areas:
+      "cta image"
+      "paper-note image";
+    gap: 1.25rem 0.5rem;
+    align-items: start;
+    justify-content: center;
+  }
+  .cta {
+    grid-area: cta;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    align-items: flex-start;
+    margin-top: 20px;
+  }
+  .hero-image {
+    grid-area: image;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    position: relative;
+  }
+  .logo-wrap {
+    position: relative;
+  }
+  .logo-tooltip {
+    position: fixed;
+    top: var(--tt-y, 0);
+    left: var(--tt-x, 0);
+    transform: translate(14px, 14px);
+    width: 320px;
+    max-width: calc(100vw - 2rem);
+    padding: 0.75rem 1rem;
+    background: #0d1117;
+    color: var(--fg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 0.85rem;
+    line-height: 1.55;
+    text-align: left;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.12s ease;
+    z-index: 100;
+  }
+  .logo-wrap.tt-show .logo-tooltip {
+    opacity: 1;
+  }
+  .logo-tooltip .chip {
+    display: inline-block;
+    background: #6b111e;
+    color: #fff;
+    padding: 0.15em 0.55em;
+    border-radius: 5px;
+    font-weight: 700;
+    margin-right: 0.35em;
+    white-space: nowrap;
+  }
+  .logo {
+    width: 480px;
+    max-width: 90vw;
+    height: auto;
+    border-radius: 8px;
+    filter: saturate(0.87);
+  }
+  .sticker-link {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    display: inline-block;
+    transform: translate(calc(-50% - 30px), 0px);
+  }
+  .sticker {
+    width: 337px;
+    height: auto;
+    opacity: 0.90;
+    transform: rotate(4deg);
+    filter: drop-shadow(1px 2px 3px rgba(0, 0, 0, 0.2));
+    image-rendering: pixelated;
+  }
+  .brand-banner {
+    display: none;
+  }
+  .buttons {
+    display: flex;
+    gap: 1.17rem;
+  }
+  .buttons :global(.btn) {
+    padding: 0.7rem 1.75rem;
+    font-size: 1.00rem;
+    border-radius: 7px;
+  }
+  @media (max-width: 880px) {
+    main {
+      padding-top: 0;
+    }
+    .cta {
+      margin-top: 10px;
+    }
+    .hero {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.5rem;
+      position: relative;
+    }
+    .brand-banner {
+      display: block;
+      width: 100%;
+      padding: 0 0 max(6px, 1.6vw) 0;
+      border-top: 2px solid #b8552a;
+      border-bottom: 2px solid #b8552a;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+      position: relative;
+      background-image:
+        url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='bn'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' seed='3'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.05 0'/></filter><rect width='100%' height='100%' filter='url(%23bn)'/></svg>"),
+        linear-gradient(180deg, #e8b931, #d4872e);
+    }
+    .brand-banner-inner {
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      width: 100%;
+      padding: 0;
+      position: relative;
+      line-height: 0;
+    }
+    .brand-letters {
+      display: block;
+      width: auto;
+      height: clamp(32px, 8vw, 72px);
+      object-fit: contain;
+      margin-top: 10px;
+    }
+    .brand-trifoil {
+      display: block;
+      width: auto;
+      height: clamp(35px, 8.8vw, 77px);
+      object-fit: contain;
+      position: absolute;
+      right: 0;
+      top: 5px;
+    }
+    .brand-tagline {
+      position: absolute;
+      left: 0.5rem;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      font-family: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+      font-weight: 700;
+      font-size: clamp(12px, 2.86vw, 24px);
+      line-height: 1;
+      color: #fff;
+      letter-spacing: -0.02em;
+      text-transform: uppercase;
+      -webkit-text-stroke: 6px #161616;
+      paint-order: stroke fill;
+    }
+    .brand-tagline span {
+      display: block;
+    }
+    .sticker-link {
+      display: none;
+    }
+    .logo {
+      display: none;
+      width: 112%;
+      max-width: 560px;
+      height: auto;
+      border-radius: 0;
+      z-index: 0;
+      pointer-events: none;
+      align-self: center;
+      margin-bottom: -20vh;
+      mask-image: linear-gradient(
+        to bottom,
+        #000 30%,
+        transparent 80%
+      );
+      -webkit-mask-image: linear-gradient(
+        to bottom,
+        #000 30%,
+        transparent 80%
+      );
+    }
+    .cta {
+      position: relative;
+      z-index: 1;
+    }
+  }
+</style>
+
+<script>
+  const LINGER_MS = 300;
+  document.querySelectorAll<HTMLElement>('.logo-wrap').forEach((wrap) => {
+    let timer: number | undefined;
+    const setPos = (x: number, y: number) => {
+      wrap.style.setProperty('--tt-x', `${x}px`);
+      wrap.style.setProperty('--tt-y', `${y}px`);
+    };
+    wrap.addEventListener('mouseenter', (e) => {
+      setPos(e.clientX, e.clientY);
+      clearTimeout(timer);
+      timer = window.setTimeout(() => wrap.classList.add('tt-show'), LINGER_MS);
+    });
+    wrap.addEventListener('mousemove', (e) => {
+      setPos(e.clientX, e.clientY);
+    });
+    wrap.addEventListener('mouseleave', () => {
+      clearTimeout(timer);
+      wrap.classList.remove('tt-show');
+    });
+  });
+</script>

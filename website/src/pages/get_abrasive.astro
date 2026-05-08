@@ -1,0 +1,115 @@
+---
+import Base from '../layouts/Base.astro';
+import CodeBlock from '../components/CodeBlock.astro';
+
+const methods = [
+  { id: 'cargo', label: 'Cargo', cmd: 'cargo install abrasive', accent: '#e07b28', icon: '/icons/cargo.png', scale: 1 },
+  { id: 'curl', label: 'cURL', cmd: 'curl https://abrasive.netlify.app/get | sh', accent: '#0d7377', icon: '/icons/curl.svg', scale: 3 },
+  { id: 'homebrew', label: 'Homebrew', cmd: 'brew install abrasive', accent: '#fbb040', icon: '/icons/homebrew.svg', scale: 1 },
+];
+---
+<Base title="abrasive - install">
+  <main>
+    <header class="intro">
+      <h1>Install Abrasive</h1>
+    </header>
+    <div class="grid">
+      {methods.map((m) => (
+        <div class="card" style={`--card-accent: ${m.accent};`}>
+          <div class="icon-wrap" style={`--icon-scale: ${m.scale};`}>
+            <img src={m.icon} alt={m.label} />
+          </div>
+          <h2 class="card-label">{m.label}</h2>
+          <CodeBlock code={m.cmd} accent={m.accent} />
+        </div>
+      ))}
+    </div>
+  </main>
+</Base>
+
+<style>
+  main {
+    width: 100%;
+    max-width: 1300px;
+    padding: 0 2rem;
+  }
+  .intro {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+  h1 {
+    font-size: 2.4rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.4rem;
+  }
+  .subtitle {
+    color: var(--muted);
+    font-size: 1rem;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 1.25rem;
+    width: 100%;
+  }
+  .card {
+    background: linear-gradient(180deg, color-mix(in srgb, var(--card-accent) 18%, transparent) 0%, rgba(255,255,255,0.02) 100%);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 2rem 1.5rem 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.25rem;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .card:hover {
+    border-color: var(--card-accent);
+    transform: translateY(-2px);
+  }
+  .icon-wrap {
+    width: 144px;
+    height: 144px;
+    position: relative;
+  }
+  .icon-wrap img {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: min(calc(72px * var(--icon-scale, 1)), 90vw);
+    height: auto;
+    max-height: calc(72px * var(--icon-scale, 1));
+    object-fit: contain;
+    filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.5));
+  }
+  .card-label {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--fg);
+    margin: 0;
+  }
+  .card :global(.code-block) {
+    background: rgba(0, 0, 0, 0.4);
+    border: none;
+    border-top: 1px solid rgba(255,255,255,0.05);
+    border-radius: 0;
+    width: calc(100% + 3rem);
+    margin-top: auto;
+    margin-left: -1.5rem;
+    margin-right: -1.5rem;
+    margin-bottom: 0;
+    padding: 0.85rem 1rem;
+    font-size: 0.82rem;
+    justify-content: space-between;
+  }
+  .card :global(.code-block code) {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex: 1;
+    min-width: 0;
+  }
+</style>
