@@ -54,17 +54,32 @@ import Demo from '../components/Demo.astro';
     const ctaEl = gate?.querySelector<HTMLElement>('.prealpha-cta');
     const fullEl = gate?.querySelector<HTMLElement>('.prealpha-full');
 
-    supabase.rpc('signup_status').then(({ data, error }) => {
-      if (error || !data || !gate) return;
-      const count = Math.max(0, Number((data as { count?: unknown }).count ?? 0));
-      const cap = Math.max(1, Number((data as { cap?: unknown }).cap ?? 20));
+    const render = (count: number, cap: number) => {
+      if (!gate) return;
       if (currentEl) currentEl.textContent = String(count);
       capEls?.forEach((el) => (el.textContent = String(cap)));
       if (fillEl) fillEl.style.width = `${Math.min(100, (count / cap) * 100)}%`;
       if (count >= cap) {
         if (ctaEl) ctaEl.hidden = true;
         if (fullEl) fullEl.hidden = false;
+      } else {
+        if (ctaEl) ctaEl.hidden = false;
+        if (fullEl) fullEl.hidden = true;
       }
+    };
+
+    // Prefer signup_status (returns {count, cap}); fall back to user_count + hardcoded cap if not deployed yet.
+    supabase.rpc('signup_status').then(({ data, error }) => {
+      if (!error && data) {
+        const count = Math.max(0, Number((data as { count?: unknown }).count ?? 0));
+        const cap = Math.max(1, Number((data as { cap?: unknown }).cap ?? 20));
+        render(count, cap);
+        return;
+      }
+      supabase.rpc('user_count').then(({ data: countData, error: countErr }) => {
+        if (countErr || typeof countData !== 'number') return;
+        render(Math.max(0, countData), 20);
+      });
     });
   }
 </script>
