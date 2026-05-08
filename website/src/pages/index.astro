@@ -27,7 +27,7 @@ import Demo from '../components/Demo.astro';
 
     <GettingStartedSteps />
 
-    <section class="prealpha-gate" data-cap="20">
+    <section class="prealpha-gate">
       <p class="prealpha-note">I can handle about <span class="prealpha-cap">20</span> users right now.<br />If we hit the cap, new signups will pause.</p>
       <div class="prealpha-bar">
         <div class="prealpha-fill" style="width: 15%"></div>
@@ -45,21 +45,21 @@ import Demo from '../components/Demo.astro';
 
   const url = import.meta.env.PUBLIC_SUPABASE_URL;
   const anonKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY;
-  if (!url || !anonKey) {
-    // Env not configured — leave the hardcoded fallback "3 of 20".
-  } else {
+  if (url && anonKey) {
     const supabase = createClient(url, anonKey);
     const gate = document.querySelector<HTMLElement>('.prealpha-gate');
     const currentEl = gate?.querySelector<HTMLElement>('.prealpha-current');
+    const capEls = gate?.querySelectorAll<HTMLElement>('.prealpha-cap');
     const fillEl = gate?.querySelector<HTMLElement>('.prealpha-fill');
     const ctaEl = gate?.querySelector<HTMLElement>('.prealpha-cta');
     const fullEl = gate?.querySelector<HTMLElement>('.prealpha-full');
-    const cap = Number(gate?.dataset.cap ?? 20);
 
-    supabase.rpc('user_count').then(({ data, error }) => {
-      if (error || typeof data !== 'number' || !gate) return;
-      const count = Math.max(0, data);
+    supabase.rpc('signup_status').then(({ data, error }) => {
+      if (error || !data || !gate) return;
+      const count = Math.max(0, Number((data as { count?: unknown }).count ?? 0));
+      const cap = Math.max(1, Number((data as { cap?: unknown }).cap ?? 20));
       if (currentEl) currentEl.textContent = String(count);
+      capEls?.forEach((el) => (el.textContent = String(cap)));
       if (fillEl) fillEl.style.width = `${Math.min(100, (count / cap) * 100)}%`;
       if (count >= cap) {
         if (ctaEl) ctaEl.hidden = true;

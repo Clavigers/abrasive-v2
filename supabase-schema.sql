@@ -31,7 +31,7 @@ create view api_tokens_public with (security_invoker = true) as
 
 grant select on api_tokens_public to authenticated;
 
--- Public user count for the marketing site's "X of 20 signed up" gate.
+-- Public user count for the marketing site's "X of N signed up" gate.
 -- SECURITY DEFINER lets it read auth.users; anon may call it to get just the count.
 create or replace function public.user_count()
 returns integer
@@ -44,3 +44,61 @@ as $$
 $$;
 
 grant execute on function public.user_count() to anon, authenticated;
+
+-- Single-row config holding the signup cap. Source of truth for both the
+-- enforcement trigger and the marketing UI.
+create table if not exists public.signup_config (
+  id boolean primary key default true,
+  user_cap integer not null default 20,
+  constraint signup_config_singleton check (id = true)
+);
+
+insert into public.signup_config (id, user_cap)
+values (true, 20)
+on conflict (id) do nothing;
+
+-- Combined count + cap, exposed to anon so the marketing page can render with one round-trip.
+create or replace function public.signup_status()
+returns json
+language sql
+security definer
+set search_path = public
+stable
+as $$
+  select json_build_object(
+    'count', (select count(*)::int from auth.users),
+    'cap', (select user_cap from public.signup_config where id = true)
+  );
+$$;
+
+grant execute on function public.signup_status() to anon, authenticated;
+
+-- Hard enforcement: reject inserts into auth.users once the cap is hit.
+-- Runs for every auth provider (OAuth, email/password, magic link, etc.).
+create or replace function public.enforce_signup_cap()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  current_cap integer;
+  current_count integer;
+begin
+  select user_cap into current_cap from public.signup_config where id = true;
+  if current_cap is null then
+    return new; -- no cap configured, allow signup
+  end if;
+  select count(*) into current_count from auth.users;
+  if current_count >= current_cap then
+    raise exception 'Signup cap reached (% of %).', current_count, current_cap
+      using errcode = 'P0001';
+  end if;
+  return new;
+end;
+$$;
+
+drop trigger if exists enforce_signup_cap_trigger on auth.users;
+create trigger enforce_signup_cap_trigger
+  before insert on auth.users
+  for each row execute function public.enforce_signup_cap();
