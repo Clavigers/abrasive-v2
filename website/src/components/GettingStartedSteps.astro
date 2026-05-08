@@ -1,0 +1,81 @@
+---
+import CodeBlock from './CodeBlock.astro';
+import InstallCommand from './InstallCommand.astro';
+---
+<section class="gs-steps" id="get-started">
+  <div class="step">
+    <h2>1. Install abrasive</h2>
+    <InstallCommand showMoreMethods={false} />
+  </div>
+
+  <div class="step">
+    <h2>2. Authenticate</h2>
+    <p>Run this and follow the prompts:</p>
+    <CodeBlock code="abrasive auth" />
+  </div>
+
+  <div class="step">
+    <h2>3. Initialize your project</h2>
+    <p>From the root of any cargo project:</p>
+    <CodeBlock code="abrasive setup" />
+    <p>This writes an <code>abrasive.toml</code> at the root (<code>team = "public"</code>, <code>scope = &lt;directory name&gt;</code>) and warms the remote build slot by syncing your source tree once. Edit <code>abrasive.toml</code> afterward if you want a different team or scope.</p>
+  </div>
+
+  <div class="step">
+    <h2>4. Build</h2>
+    <p>From anywhere inside the project, run abrasive with the same flags you'd pass to cargo:</p>
+    <CodeBlock code="abrasive build" />
+    <CodeBlock code="abrasive run -- --help" />
+    <CodeBlock code="abrasive test" />
+    <p>The first build warms the remote cache; subsequent builds across your team reuse it.</p>
+  </div>
+
+  <div class="step" id="alias">
+    <h2>5. Set up a cargo alias <span class="optional">(optional)</span></h2>
+    <p>Abrasive is command-line compatible with cargo. Aliasing <code>cargo=abrasive</code> lets you keep typing <code>cargo</code>, and your existing scripts keep working too.</p>
+    <p>For bash:</p>
+    <CodeBlock code={`echo 'alias cargo="abrasive"' >> ~/.bashrc && source ~/.bashrc`} />
+    <p>For zsh, replace <code>~/.bashrc</code> with <code>~/.zshrc</code>. For fish:</p>
+    <CodeBlock code={`alias --save cargo="abrasive"`} />
+    <p>Now <code>cargo setup</code>, <code>cargo build</code>, <code>cargo run</code>, etc. all route through abrasive.</p>
+  </div>
+</section>
+
+<style>
+  .gs-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+    max-width: 720px;
+    width: 100%;
+    align-items: flex-start;
+    margin: 3rem auto 0;
+  }
+  .step {
+    width: 100%;
+  }
+  h2 {
+    font-size: 1.4rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+  }
+  .optional {
+    color: var(--muted);
+    font-weight: 400;
+    font-size: 0.9rem;
+  }
+  p {
+    color: var(--fg);
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin-bottom: 0.75rem;
+  }
+  p code {
+    color: var(--accent);
+    background: var(--code-bg);
+    padding: 0.15rem 0.4rem;
+    border-radius: 4px;
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    font-size: 0.85em;
+  }
+</style>

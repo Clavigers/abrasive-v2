@@ -68,47 +68,37 @@ const pageTitle = title ?? frontmatter?.title ?? 'abrasive';
         width: 100vw;
         background: #090c10;
         border-top: 1px solid var(--border);
-        padding: 2rem 2rem 0;
+        padding: 1.25rem 2rem;
         display: flex;
-        flex-direction: column;
-        align-items: center;
+        justify-content: center;
       }
-      .footer-inner {
+      .footer-row {
         display: flex;
-        gap: 4rem;
-        padding: 2rem 0;
+        align-items: center;
+        gap: 2rem;
         width: 100%;
         max-width: 1200px;
+        font-size: 0.85rem;
+        flex-wrap: wrap;
       }
-      .footer-col {
+      .footer-links {
         display: flex;
-        flex-direction: column;
-        gap: 0.5rem;
+        align-items: center;
+        gap: 1.5rem;
+        flex-wrap: wrap;
       }
-      .footer-col h4 {
-        font-size: 0.8rem;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        color: var(--fg);
-        margin-bottom: 0.25rem;
-      }
-      .footer-col a {
+      .footer-links a {
         color: var(--muted);
         text-decoration: none;
-        font-size: 0.85rem;
         transition: color 0.15s;
       }
-      .footer-col a:hover {
+      .footer-links a:hover {
         color: var(--fg);
       }
-      .footer-bottom {
-        border-top: 1px solid var(--border);
-        padding: 1rem 0;
-        font-size: 0.75rem;
+      .footer-copy {
+        margin-left: auto;
         color: var(--muted);
-        width: 100%;
-        max-width: 1200px;
+        font-size: 0.75rem;
       }
     </style>
   </head>
@@ -120,27 +110,15 @@ const pageTitle = title ?? frontmatter?.title ?? 'abrasive';
     </div>
     {!hideFooter && (
       <footer>
-        <div class="footer-inner">
-          <div class="footer-col">
-            <h4>Abrasive</h4>
+        <div class="footer-row">
+          <nav class="footer-links">
             <a href="/">Home</a>
             <a href="/demo">Demo</a>
-            <a href="/getting-started">Get Started</a>
-          </div>
-          <div class="footer-col">
-            <h4>Install</h4>
-            <a href="/get_abrasive">Get Abrasive</a>
-            <a href="/getting-started#alias">Cargo Alias</a>
-          </div>
-          <div class="footer-col">
-            <h4>Community</h4>
-            <a href="https://github.com/Clavigers/abrasive-cli">GitHub</a>
-            <a href="https://github.com/Clavigers/abrasive-cli/issues">Issues</a>
-            <a href="https://github.com/Clavigers/abrasive-cli/discussions">Discussions</a>
-          </div>
-        </div>
-        <div class="footer-bottom">
-          <span>&copy; 2026 Claviger.</span>
+            <a href="https://github.com/Clavigers/abrasive">GitHub</a>
+            <a href="/tos">TOS</a>
+            <a href="/privacy">Privacy Policy</a>
+          </nav>
+          <span class="footer-copy">&copy; 2026 Claviger.</span>
         </div>
       </footer>
     )}
