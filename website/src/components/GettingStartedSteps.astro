@@ -1,43 +1,47 @@
 ---
 import CodeBlock from './CodeBlock.astro';
 import InstallCommand from './InstallCommand.astro';
+import { Content as Step1 } from '../content/getting-started/step-1.md';
+import { Content as Step2 } from '../content/getting-started/step-2.md';
+import { Content as Step3Pre } from '../content/getting-started/step-3-pre.md';
+import { Content as Step3Post } from '../content/getting-started/step-3-post.md';
+import { Content as Step4Pre } from '../content/getting-started/step-4-pre.md';
+import { Content as Step4Post } from '../content/getting-started/step-4-post.md';
+import { Content as Step5Pre } from '../content/getting-started/step-5-pre.md';
+import { Content as Step5Mid } from '../content/getting-started/step-5-mid.md';
+import { Content as Step5Post } from '../content/getting-started/step-5-post.md';
 ---
 <section class="gs-steps" id="get-started">
   <div class="step">
-    <h2>1. Install abrasive</h2>
+    <Step1 />
     <InstallCommand showMoreMethods={false} />
   </div>
 
   <div class="step">
-    <h2>2. Authenticate</h2>
-    <p>Run this and follow the prompts:</p>
+    <Step2 />
     <CodeBlock code="abrasive auth" />
   </div>
 
   <div class="step">
-    <h2>3. Initialize your project</h2>
-    <p>From the root of any cargo project:</p>
+    <Step3Pre />
     <CodeBlock code="abrasive setup" />
-    <p>This writes an <code>abrasive.toml</code> at the root (<code>team = "public"</code>, <code>scope = &lt;directory name&gt;</code>) and warms the remote build slot by syncing your source tree once. Edit <code>abrasive.toml</code> afterward if you want a different team or scope.</p>
+    <Step3Post />
   </div>
 
   <div class="step">
-    <h2>4. Build</h2>
-    <p>From anywhere inside the project, run abrasive with the same flags you'd pass to cargo:</p>
+    <Step4Pre />
     <CodeBlock code="abrasive build" />
     <CodeBlock code="abrasive run -- --help" />
     <CodeBlock code="abrasive test" />
-    <p>The first build warms the remote cache; subsequent builds across your team reuse it.</p>
+    <Step4Post />
   </div>
 
   <div class="step" id="alias">
-    <h2>5. Set up a cargo alias <span class="optional">(optional)</span></h2>
-    <p>Abrasive is command-line compatible with cargo. Aliasing <code>cargo=abrasive</code> lets you keep typing <code>cargo</code>, and your existing scripts keep working too.</p>
-    <p>For bash:</p>
+    <Step5Pre />
     <CodeBlock code={`echo 'alias cargo="abrasive"' >> ~/.bashrc && source ~/.bashrc`} />
-    <p>For zsh, replace <code>~/.bashrc</code> with <code>~/.zshrc</code>. For fish:</p>
+    <Step5Mid />
     <CodeBlock code={`alias --save cargo="abrasive"`} />
-    <p>Now <code>cargo setup</code>, <code>cargo build</code>, <code>cargo run</code>, etc. all route through abrasive.</p>
+    <Step5Post />
   </div>
 </section>
 

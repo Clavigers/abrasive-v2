@@ -3,7 +3,11 @@ import Base from '../layouts/Base.astro';
 import InstallCommand from '../components/InstallCommand.astro';
 import PaperNote from '../components/PaperNote.astro';
 import GettingStartedSteps from '../components/GettingStartedSteps.astro';
-import Demo from '../components/Demo.astro';
+import { Content as Hero } from '../content/hero.md';
+import { Content as Warning } from '../content/warning.md';
+import { Content as PrealphaIntro } from '../content/prealpha-intro.md';
+import { Content as PrealphaCaption } from '../content/prealpha-caption.md';
+import { Content as PrealphaFull } from '../content/prealpha-full.md';
 ---
 <Base title="abrasive">
   <main>
@@ -12,29 +16,25 @@ import Demo from '../components/Demo.astro';
         <InstallCommand large showMoreMethods={false} />
       </div>
       <div class="hero-description">
-        <p><strong>Abrasive</strong> is an opinionated solution to fast and correct Rust builds, especially for monorepos.</p>
-        <p>Plain <code>cargo build</code> is great, but it has nothing to share between machines. Bazel and Buck2 do, but at the cost of a whole new mental model layered on top of everything Cargo already does well.</p>
-        <p>Abrasive sits on top of Cargo instead of replacing it. A shared, content-addressed artifact store hydrates your local <code>target/</code> from anyone on your team &mdash; or CI &mdash; who already built the same inputs. The first person to compile a revision pays the cost; everyone else gets it for free.</p>
+        <Hero />
       </div>
       <div class="hero-warning">
         <PaperNote>
-          <p><mark>WARNING!</mark><br />This is Pre-Alpha software.<br />There are sure to be issues.<br />Reach out to me directly at<br /><a href="mailto:sadosystemz@gmail.com">sadosystemz@gmail.com</a><br />with any problems.</p>
+          <Warning />
         </PaperNote>
       </div>
     </div>
 
-    <Demo />
-
     <GettingStartedSteps />
 
     <section class="prealpha-gate">
-      <p class="prealpha-note">I can handle about <span class="prealpha-cap">20</span> users right now.<br />If we hit the cap, new signups will pause.</p>
+      <PrealphaIntro />
       <div class="prealpha-bar">
         <div class="prealpha-fill" style="width: 15%"></div>
       </div>
-      <p class="prealpha-caption"><span class="prealpha-current">3</span> of <span class="prealpha-cap">20</span> signed up</p>
+      <PrealphaCaption />
       <a class="prealpha-cta" data-auth="signed-out" href="/dashboard/sign-up">Sign up free</a>
-      <p class="prealpha-full" hidden>Signups are paused while we work through the current cap. Check back soon.</p>
+      <PrealphaFull />
     </section>
 
   </main>
