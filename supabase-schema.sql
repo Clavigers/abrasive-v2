@@ -30,3 +30,17 @@ create view api_tokens_public with (security_invoker = true) as
   from api_tokens;
 
 grant select on api_tokens_public to authenticated;
+
+-- Public user count for the marketing site's "X of 20 signed up" gate.
+-- SECURITY DEFINER lets it read auth.users; anon may call it to get just the count.
+create or replace function public.user_count()
+returns integer
+language sql
+security definer
+set search_path = public
+stable
+as $$
+  select count(*)::int from auth.users;
+$$;
+
+grant execute on function public.user_count() to anon, authenticated;

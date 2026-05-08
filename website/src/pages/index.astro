@@ -27,17 +27,47 @@ import Demo from '../components/Demo.astro';
 
     <GettingStartedSteps />
 
-    <section class="prealpha-gate">
-      <p class="prealpha-note">I can handle about 20 users right now.<br />If we hit the cap, new signups will pause.</p>
+    <section class="prealpha-gate" data-cap="20">
+      <p class="prealpha-note">I can handle about <span class="prealpha-cap">20</span> users right now.<br />If we hit the cap, new signups will pause.</p>
       <div class="prealpha-bar">
         <div class="prealpha-fill" style="width: 15%"></div>
       </div>
-      <p class="prealpha-caption"><span class="prealpha-current">3</span> of 20 signed up</p>
+      <p class="prealpha-caption"><span class="prealpha-current">3</span> of <span class="prealpha-cap">20</span> signed up</p>
       <a class="prealpha-cta" data-auth="signed-out" href="/dashboard/sign-up">Sign up free</a>
+      <p class="prealpha-full" hidden>Signups are paused while we work through the current cap. Check back soon.</p>
     </section>
 
   </main>
 </Base>
+
+<script>
+  import { createClient } from '@supabase/supabase-js';
+
+  const url = import.meta.env.PUBLIC_SUPABASE_URL;
+  const anonKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY;
+  if (!url || !anonKey) {
+    // Env not configured — leave the hardcoded fallback "3 of 20".
+  } else {
+    const supabase = createClient(url, anonKey);
+    const gate = document.querySelector<HTMLElement>('.prealpha-gate');
+    const currentEl = gate?.querySelector<HTMLElement>('.prealpha-current');
+    const fillEl = gate?.querySelector<HTMLElement>('.prealpha-fill');
+    const ctaEl = gate?.querySelector<HTMLElement>('.prealpha-cta');
+    const fullEl = gate?.querySelector<HTMLElement>('.prealpha-full');
+    const cap = Number(gate?.dataset.cap ?? 20);
+
+    supabase.rpc('user_count').then(({ data, error }) => {
+      if (error || typeof data !== 'number' || !gate) return;
+      const count = Math.max(0, data);
+      if (currentEl) currentEl.textContent = String(count);
+      if (fillEl) fillEl.style.width = `${Math.min(100, (count / cap) * 100)}%`;
+      if (count >= cap) {
+        if (ctaEl) ctaEl.hidden = true;
+        if (fullEl) fullEl.hidden = false;
+      }
+    });
+  }
+</script>
 
 <style>
   .prealpha-gate {
@@ -100,6 +130,14 @@ import Demo from '../components/Demo.astro';
     color: #fff;
   }
   .prealpha-cta[hidden] {
+    display: none;
+  }
+  .prealpha-full {
+    margin-top: 1rem;
+    font-size: 0.95rem;
+    color: var(--muted);
+  }
+  .prealpha-full[hidden] {
     display: none;
   }
   .hero-warning {
