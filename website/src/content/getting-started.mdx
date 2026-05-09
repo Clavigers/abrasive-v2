@@ -1,18 +1,18 @@
 import CodeBlock from '../components/CodeBlock.astro';
 
-Getting started:
+# Setup
 
-From the root of any cargo project, initialize:
+From inside your project, initialize:
 
 <CodeBlock code="abrasive setup" />
 
-Next, authenticate with the server. A dialogue will ask for the instance you want to authenticate with
+This adds an `abrasive` section to your top-level `Cargo.toml`. Edit `team` or `scope` there if you need to.
+
+Now authenticate. When asked which instance to use, enter `try.abrasive.dev`.
 
 <CodeBlock code="abrasive auth" />
 
-
-
-This writes an `abrasive.toml` at the root (`team = "public"`, `scope = <directory name>`) and warms the remote build slot by syncing your source tree once. Edit `abrasive.toml` afterward if you want a different team or scope.
+# Basic use
 
 From anywhere inside the project, run abrasive with the same flags you'd pass to cargo:
 

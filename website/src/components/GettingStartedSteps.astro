@@ -13,7 +13,7 @@ import { Content } from '../content/getting-started.mdx';
     max-width: 576px;
     width: 100%;
     align-items: flex-start;
-    margin: 3rem auto 0;
+    margin: 0.5rem auto 0;
   }
   .gs-steps :global(.code-block) {
     margin: 0.5rem 0;
@@ -31,9 +31,17 @@ import { Content } from '../content/getting-started.mdx';
   .gs-steps :global(.code-block + .code-block) {
     margin-top: -0.75rem;
   }
+  .gs-steps :global(h1) {
+    width: 100%;
+    text-align: left;
+    color: var(--fg);
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin: 0 0 0.5rem;
+  }
   .gs-steps :global(p) {
-    color: var(--muted);
-    font-size: 0.95rem;
+    color: #a8b1bc;
+    font-size: 1.02rem;
     line-height: 1.6;
     margin: 0;
   }

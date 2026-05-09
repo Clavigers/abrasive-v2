@@ -15,7 +15,7 @@ import { Content as PrealphaFull } from '../content/prealpha-full.md';
   <main>
     <div class="hero">
       <div class="hero-logo">
-        <Image src={abrasiveKeys} alt="abrasive" width={320} loading="eager" />
+        <Image src={abrasiveKeys} alt="abrasive" width={232} loading="eager" />
       </div>
       <div class="cta">
         <InstallCommand large showMoreMethods={false} />
@@ -38,7 +38,7 @@ import { Content as PrealphaFull } from '../content/prealpha-full.md';
         <div class="prealpha-fill" style="width: 15%"></div>
       </div>
       <PrealphaCaption />
-      <a class="prealpha-cta" data-auth="signed-out" href="/dashboard/sign-up">Sign up free</a>
+      <a class="prealpha-cta" data-auth="signed-out" href="/dashboard/sign-up">Sign up</a>
       <PrealphaFull />
     </section>
 
@@ -172,8 +172,9 @@ import { Content as PrealphaFull } from '../content/prealpha-full.md';
     width: 100%;
   }
   .hero-logo :global(img) {
-    max-width: min(100%, 320px);
+    max-width: min(100%, 232px);
     height: auto;
+    image-rendering: pixelated;
   }
   main {
     padding-top: 1rem;
@@ -191,13 +192,13 @@ import { Content as PrealphaFull } from '../content/prealpha-full.md';
     gap: 2rem;
     width: 100%;
     min-height: calc(100svh - var(--topbar-h, 57px) - 160px);
-    padding: 4rem 0 2rem;
+    padding: 1.5rem 0 1rem;
     position: relative;
   }
   .hero-description {
     font-family: "Figtree", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    font-size: clamp(0.62rem, 1.68vw, 1.08rem);
-    color: var(--muted);
+    font-size: 1.02rem;
+    color: #a8b1bc;
     text-align: left;
     letter-spacing: -0.01em;
     margin: 20px 0 0;
@@ -229,13 +230,5 @@ import { Content as PrealphaFull } from '../content/prealpha-full.md';
     gap: 1.5rem;
     align-items: center;
     margin-top: 0.5rem;
-  }
-  @media (max-width: 880px) {
-    main {
-      padding-top: 0;
-    }
-    .hero {
-      padding: 1rem 0;
-    }
   }
 </style>
