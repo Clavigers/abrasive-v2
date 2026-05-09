@@ -6,4 +6,4 @@ The code is open source.
 
 There is a server component to abrasive, if you want to check it out without setting up hosting you can join the test instance. I need to limit the number of builds to something reasonable because I don't have infinite money.
 
-AI disclosure: None of the code in abrasive was written by an LLM, but LLMs were used extensively for research and bug finding.
+AI disclosure: None of the code in abrasive was written by an LLM, but LLMs were used for research and bug hunting.
