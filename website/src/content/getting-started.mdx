@@ -1,0 +1,33 @@
+import CodeBlock from '../components/CodeBlock.astro';
+
+Getting started:
+
+From the root of any cargo project, initialize:
+
+<CodeBlock code="abrasive setup" />
+
+Next, authenticate with the server. A dialogue will ask for the instance you want to authenticate with
+
+<CodeBlock code="abrasive auth" />
+
+
+
+This writes an `abrasive.toml` at the root (`team = "public"`, `scope = <directory name>`) and warms the remote build slot by syncing your source tree once. Edit `abrasive.toml` afterward if you want a different team or scope.
+
+From anywhere inside the project, run abrasive with the same flags you'd pass to cargo:
+
+<CodeBlock code="abrasive build" />
+<CodeBlock code="abrasive run -- --help" />
+<CodeBlock code="abrasive test" />
+
+The first build warms the remote cache; subsequent builds across your team reuse it.
+
+Optionally, set up a cargo alias. Abrasive is command-line compatible with cargo. Aliasing `cargo=abrasive` lets you keep typing `cargo`, and your existing scripts keep working too. For bash:
+
+<CodeBlock code={`echo 'alias cargo="abrasive"' >> ~/.bashrc && source ~/.bashrc`} />
+
+For zsh, replace `~/.bashrc` with `~/.zshrc`. For fish:
+
+<CodeBlock code={`alias --save cargo="abrasive"`} />
+
+Now `cargo setup`, `cargo build`, `cargo run`, etc. all route through abrasive.

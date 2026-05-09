@@ -1,1 +1,0 @@
-This writes an `abrasive.toml` at the root (`team = "public"`, `scope = <directory name>`) and warms the remote build slot by syncing your source tree once. Edit `abrasive.toml` afterward if you want a different team or scope.

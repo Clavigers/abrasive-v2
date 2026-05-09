@@ -1,1 +1,1 @@
-<mark>WARNING!</mark> This is Pre-Alpha software,<br />there are sure to be issues. Reach out to me<br />directly at <a href="mailto:sadosystemz@gmail.com">sadosystemz@gmail.com</a> with any problems.
+<mark>WARNING!</mark> This is Pre-Alpha software. There will be issues. Feel free to reach out to me directly at <a href="mailto:sadosystemz@gmail.com">sadosystemz@gmail.com</a> with any problems.

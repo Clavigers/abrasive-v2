@@ -1,80 +1,43 @@
 ---
-import CodeBlock from './CodeBlock.astro';
-import InstallCommand from './InstallCommand.astro';
-import { Content as Step1 } from '../content/getting-started/step-1.md';
-import { Content as Step2 } from '../content/getting-started/step-2.md';
-import { Content as Step3Pre } from '../content/getting-started/step-3-pre.md';
-import { Content as Step3Post } from '../content/getting-started/step-3-post.md';
-import { Content as Step4Pre } from '../content/getting-started/step-4-pre.md';
-import { Content as Step4Post } from '../content/getting-started/step-4-post.md';
-import { Content as Step5Pre } from '../content/getting-started/step-5-pre.md';
-import { Content as Step5Mid } from '../content/getting-started/step-5-mid.md';
-import { Content as Step5Post } from '../content/getting-started/step-5-post.md';
+import { Content } from '../content/getting-started.mdx';
 ---
 <section class="gs-steps" id="get-started">
-  <div class="step">
-    <Step1 />
-    <InstallCommand showMoreMethods={false} />
-  </div>
-
-  <div class="step">
-    <Step2 />
-    <CodeBlock code="abrasive auth" />
-  </div>
-
-  <div class="step">
-    <Step3Pre />
-    <CodeBlock code="abrasive setup" />
-    <Step3Post />
-  </div>
-
-  <div class="step">
-    <Step4Pre />
-    <CodeBlock code="abrasive build" />
-    <CodeBlock code="abrasive run -- --help" />
-    <CodeBlock code="abrasive test" />
-    <Step4Post />
-  </div>
-
-  <div class="step" id="alias">
-    <Step5Pre />
-    <CodeBlock code={`echo 'alias cargo="abrasive"' >> ~/.bashrc && source ~/.bashrc`} />
-    <Step5Mid />
-    <CodeBlock code={`alias --save cargo="abrasive"`} />
-    <Step5Post />
-  </div>
+  <Content />
 </section>
 
 <style>
   .gs-steps {
     display: flex;
     flex-direction: column;
-    gap: 3rem;
+    gap: 1.25rem;
     max-width: 576px;
     width: 100%;
     align-items: flex-start;
     margin: 3rem auto 0;
   }
-  .step {
-    width: 100%;
+  .gs-steps :global(.code-block) {
+    margin: 0.5rem 0;
   }
-  h2 {
-    font-size: clamp(0.78rem, 2.1vw, 1.35rem);
-    font-weight: 600;
-    margin-bottom: 1rem;
+  .gs-steps :global(.code-block:hover) {
+    border-color: var(--muted);
   }
-  .optional {
+  .gs-steps :global(.code-block code) {
     color: var(--muted);
-    font-weight: 400;
-    font-size: 0.9rem;
+    transition: color 0.15s;
   }
-  p {
-    color: var(--fg);
+  .gs-steps :global(.code-block:hover code) {
+    color: #fff;
+  }
+  .gs-steps :global(.code-block + .code-block) {
+    margin-top: -0.75rem;
+  }
+  .gs-steps :global(p) {
+    color: var(--muted);
     font-size: 0.95rem;
     line-height: 1.6;
-    margin-bottom: 0.75rem;
+    margin: 0;
   }
-  p code {
+  .gs-steps :global(p code) {
     color: var(--accent);
     background: var(--code-bg);
     padding: 0.15rem 0.4rem;
